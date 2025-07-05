@@ -608,6 +608,7 @@ const FleursCBDCategoryPage = () => {
           {/* Main Content */}
           <div className="text-center mb-16 relative z-10">
             {/* Badge */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-8">
             <div className="inline-block bg-[#08F06C] text-black px-6 py-3 rounded-full font-bold text-lg mb-8 shadow-lg">
               💎 QUALITÉ PREMIUM
             </div>
@@ -621,7 +622,7 @@ const FleursCBDCategoryPage = () => {
               les adopter.
             <div className="space-y-8 text-lg sm:text-xl text-gray-300 max-w-5xl mx-auto">
               <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 border border-[#08F06C]/20 hover:border-[#08F06C]/40 transition-all duration-300 transform hover:-translate-y-1">
-                <p className="leading-relaxed">
+            <div className="space-y-6 text-base sm:text-lg text-gray-300 max-w-4xl mx-auto">
                   Nos résines sont soigneusement extraites des fleurs de cannabis pour offrir une 
                   concentration de cannabidiol idéale et une <span className="font-bold text-[#08F06C]">expérience proche de la perfection</span>.
                 </p>
@@ -674,31 +675,6 @@ const FleursCBDCategoryPage = () => {
               <button className="bg-gradient-to-r from-[#08F06C] to-green-400 hover:from-green-400 hover:to-[#08F06C] text-black px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-[#08F06C]/25">
                 Découvrir Nos Résines Premium
               </button>
-            </div>
-          </div>
-        </div>
-      </div>
-            <div className="space-y-6 text-base sm:text-lg text-gray-300 max-w-4xl mx-auto">
-              linear-gradient(90deg, rgba(8,240,108,0.3) 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px'
-          }}
-        ></div>
-        
-              <p>
-                Nos résines sont soigneusement extraites des fleurs de cannabis pour offrir une 
-                concentration de cannabidiol idéale et une <span className="font-bold">expérience proche de la perfection</span>.
-              </p>
-              
-              <p>
-                Nos résines offrent un <span className="font-bold">taux de CBD élevé</span> et une <span className="font-bold">expérience ultra relaxante quelque-soit 
-                la variété de Hash CBD</span> commandée.
-              </p>
-              
-              <p>
-                Nos résines de CBD conservent les <span className="font-bold">arômes authentiques du kief et des terpènes du 
-                cannabis</span> tout en étant parfaitement conformes à la législation.
-              </p>
             </div>
           </div>
         </div>
