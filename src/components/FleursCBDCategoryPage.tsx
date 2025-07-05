@@ -603,16 +603,88 @@ const FleursCBDCategoryPage = () => {
       </div>
 
       {/* Bottom Information Section */}
-      <div className="relative z-20 bg-white py-16">
+      <div className="relative z-20 bg-black py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Main Content */}
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-black mb-8">
+          <div className="text-center mb-16 relative z-10">
+            {/* Badge */}
+            <div className="inline-block bg-[#08F06C] text-black px-6 py-3 rounded-full font-bold text-lg mb-8 shadow-lg">
+              💎 QUALITÉ PREMIUM
+            </div>
+            
+            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white mb-12 leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-8">
+              <span className="text-[#08F06C] bg-gradient-to-r from-[#08F06C] to-green-400 bg-clip-text text-transparent">
+                les adopter.
+              </span>
               Acheter les résines de CBD Pas Cher 13 c'est<br />
               les adopter.
-            </h2>
+            <div className="space-y-8 text-lg sm:text-xl text-gray-300 max-w-5xl mx-auto">
+              <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 border border-[#08F06C]/20 hover:border-[#08F06C]/40 transition-all duration-300 transform hover:-translate-y-1">
+                <p className="leading-relaxed">
+                  Nos résines sont soigneusement extraites des fleurs de cannabis pour offrir une 
+                  concentration de cannabidiol idéale et une <span className="font-bold text-[#08F06C]">expérience proche de la perfection</span>.
+                </p>
+              </div>
+              
+              <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 border border-[#08F06C]/20 hover:border-[#08F06C]/40 transition-all duration-300 transform hover:-translate-y-1">
+                <p className="leading-relaxed">
+                  Nos résines offrent un <span className="font-bold text-[#08F06C]">taux de CBD élevé</span> et une <span className="font-bold text-[#08F06C]">expérience ultra relaxante quelque-soit 
+                  la variété de Hash CBD</span> commandée.
+                </p>
+              </div>
+              
+              <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 border border-[#08F06C]/20 hover:border-[#08F06C]/40 transition-all duration-300 transform hover:-translate-y-1">
+                <p className="leading-relaxed">
+                  Nos résines de CBD conservent les <span className="font-bold text-[#08F06C]">arômes authentiques du kief et des terpènes du 
+                  cannabis</span> tout en étant parfaitement conformes à la législation.
+                </p>
+              </div>
+            </div>
             
-            <div className="space-y-6 text-base sm:text-lg text-gray-700 max-w-4xl mx-auto">
+            {/* Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+              <div className="bg-gradient-to-br from-[#08F06C]/20 to-green-400/10 backdrop-blur-sm rounded-xl p-6 border border-[#08F06C]/30">
+                <div className="w-12 h-12 bg-[#08F06C] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-black font-bold text-xl">🌿</span>
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2">100% Naturel</h3>
+                <p className="text-gray-300 text-sm">Extraction pure sans additifs chimiques</p>
+              </div>
+              
+              <div className="bg-gradient-to-br from-[#08F06C]/20 to-green-400/10 backdrop-blur-sm rounded-xl p-6 border border-[#08F06C]/30">
+                <div className="w-12 h-12 bg-[#08F06C] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-black font-bold text-xl">🔬</span>
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2">Testé en Labo</h3>
+                <p className="text-gray-300 text-sm">Analyses complètes de qualité et pureté</p>
+              </div>
+              
+              <div className="bg-gradient-to-br from-[#08F06C]/20 to-green-400/10 backdrop-blur-sm rounded-xl p-6 border border-[#08F06C]/30">
+                <div className="w-12 h-12 bg-[#08F06C] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-black font-bold text-xl">⚡</span>
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2">Effet Rapide</h3>
+                <p className="text-gray-300 text-sm">Concentration optimale pour un effet immédiat</p>
+              </div>
+            </div>
+            
+            {/* CTA Button */}
+            <div className="mt-12">
+              <button className="bg-gradient-to-r from-[#08F06C] to-green-400 hover:from-green-400 hover:to-[#08F06C] text-black px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-[#08F06C]/25">
+                Découvrir Nos Résines Premium
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+            <div className="space-y-6 text-base sm:text-lg text-gray-300 max-w-4xl mx-auto">
+              linear-gradient(90deg, rgba(8,240,108,0.3) 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px'
+          }}
+        ></div>
+        
               <p>
                 Nos résines sont soigneusement extraites des fleurs de cannabis pour offrir une 
                 concentration de cannabidiol idéale et une <span className="font-bold">expérience proche de la perfection</span>.
