@@ -2,6 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Improve focus visibility */
+@layer base {
+  *:focus {
+    outline: 2px solid #08F06C;
+    outline-offset: 2px;
+  }
+  
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+/* Line clamp utility */
+@layer utilities {
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Improved animations */
 @keyframes scroll {
   0% {
     transform: translateX(0);
@@ -92,4 +127,31 @@
 .animate-slide-up-delay-3 {
   animation: slide-up-delay-3 1s ease-out 0.8s forwards;
   opacity: 0;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Improve contrast for better accessibility */
+@media (prefers-contrast: high) {
+  .text-gray-300 {
+    color: #e5e7eb;
+  }
+  
+  .text-gray-400 {
+    color: #d1d5db;
+  }
+  
+  .border-white\/20 {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
 }

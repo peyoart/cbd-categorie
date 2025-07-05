@@ -1,22 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Star, ShoppingCart, ChevronDown, Eye, Filter, Grid, List, SlidersHorizontal } from 'lucide-react';
 
-const FleursCBDCategoryPage = () => {
+interface ProductOption {
+  weight: string;
+  price: string;
+  originalPrice: string;
+  salePrice: string;
+}
+
+interface Product {
+  id: number;
+  name: string;
+  discount: string;
+  rating: number;
+  reviews: number;
+  category: string;
+  categoryColor: string;
+  image: string;
+  inStock: boolean;
+  options: ProductOption[];
+}
+
+interface Category {
+  id: string;
+  name: string;
+  count: number;
+}
+
+interface PriceRange {
+  id: string;
+  name: string;
+  min: number;
+  max: number;
+}
+
+const FleursCBDCategoryPage: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<{[key: number]: number}>({});
-  const [sortBy, setSortBy] = useState('popularity');
-  const [viewMode, setViewMode] = useState('grid');
-  const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState<string>('popularity');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
 
-  // Initialize all products with first option selected
-  React.useEffect(() => {
-    const initialOptions: {[key: number]: number} = {};
-    products.forEach(product => {
-      initialOptions[product.id] = 0;
-    });
-    setSelectedOptions(initialOptions);
-  }, []);
-
-  const products = [
+  const products: Product[] = useMemo(() => [
     {
       id: 1,
       name: "Fruit Cake",
@@ -146,21 +172,93 @@ const FleursCBDCategoryPage = () => {
         { weight: "10G", price: "5,75€/g", originalPrice: "72€", salePrice: "57.5€" }
       ]
     }
-  ];
+  ], []);
 
-  const categories = [
+  const categories: Category[] = useMemo(() => [
     { id: 'all', name: 'Tous les produits', count: products.length },
     { id: 'bons-plans', name: 'Bons Plans', count: products.filter(p => p.category === 'Bons Plans').length },
     { id: 'fleurs-cbd', name: 'Fleurs CBD', count: products.filter(p => p.category === 'Fleurs CBD').length },
-  ];
+  ], [products]);
 
-  const priceRanges = [
+  const priceRanges: PriceRange[] = useMemo(() => [
     { id: 'all', name: 'Tous les prix', min: 0, max: Infinity },
     { id: '0-20', name: '0€ - 20€', min: 0, max: 20 },
     { id: '20-50', name: '20€ - 50€', min: 20, max: 50 },
     { id: '50-100', name: '50€ - 100€', min: 50, max: 100 },
     { id: '100+', name: '100€+', min: 100, max: Infinity },
-  ];
+  ], []);
+
+  // Initialize all products with first option selected
+  React.useEffect(() => {
+    const initialOptions: {[key: number]: number} = {};
+    products.forEach(product => {
+      initialOptions[product.id] = 0;
+    });
+    setSelectedOptions(initialOptions);
+  }, [products]);
+
+  const handleOptionChange = useCallback((productId: number, optionIndex: number) => {
+    setSelectedOptions(prev => ({
+      ...prev,
+      [productId]: optionIndex
+    }));
+  }, []);
+
+  const toggleDropdown = useCallback((productId: number) => {
+    const dropdown = document.getElementById(`dropdown-${productId}`);
+    if (dropdown) {
+      dropdown.classList.toggle('hidden');
+    }
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+      // Category filter
+      if (selectedCategory !== 'all') {
+        const categoryMatch = selectedCategory === 'bons-plans' ? 
+          product.category === 'Bons Plans' : 
+          product.category === 'Fleurs CBD';
+        if (!categoryMatch) return false;
+      }
+
+      // Price filter
+      if (selectedPriceRange !== 'all') {
+        const priceRange = priceRanges.find(range => range.id === selectedPriceRange);
+        if (priceRange) {
+          const currentOption = product.options[selectedOptions[product.id] || 0];
+          const price = parseFloat(currentOption.salePrice.replace('€', '').replace(',', '.'));
+          if (price < priceRange.min || price > priceRange.max) return false;
+        }
+      }
+
+      return true;
+    });
+  }, [products, selectedCategory, selectedPriceRange, selectedOptions, priceRanges]);
+
+  const sortedProducts = useMemo(() => {
+    const sorted = [...filteredProducts];
+    
+    switch (sortBy) {
+      case 'price-low':
+        return sorted.sort((a, b) => {
+          const priceA = parseFloat(a.options[selectedOptions[a.id] || 0].salePrice.replace('€', '').replace(',', '.'));
+          const priceB = parseFloat(b.options[selectedOptions[b.id] || 0].salePrice.replace('€', '').replace(',', '.'));
+          return priceA - priceB;
+        });
+      case 'price-high':
+        return sorted.sort((a, b) => {
+          const priceA = parseFloat(a.options[selectedOptions[a.id] || 0].salePrice.replace('€', '').replace(',', '.'));
+          const priceB = parseFloat(b.options[selectedOptions[b.id] || 0].salePrice.replace('€', '').replace(',', '.'));
+          return priceB - priceA;
+        });
+      case 'rating':
+        return sorted.sort((a, b) => b.rating - a.rating);
+      case 'name':
+        return sorted.sort((a, b) => a.name.localeCompare(b.name));
+      default:
+        return sorted.sort((a, b) => b.reviews - a.reviews);
+    }
+  }, [filteredProducts, sortBy, selectedOptions]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
@@ -190,6 +288,7 @@ const FleursCBDCategoryPage = () => {
             src="https://cbdpascher13.fr/wp-content/uploads/2025/03/fleurs.png"
             alt="Fleurs CBD"
             className="w-full h-full object-cover"
+            loading="eager"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
         </div>
@@ -207,10 +306,104 @@ const FleursCBDCategoryPage = () => {
           </p>
         </div>
 
+        {/* Filters and Sorting */}
+        <div className="mb-8 flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+          {/* Filters */}
+          <div className="flex flex-wrap gap-4 items-center">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-white/20 transition-colors duration-200"
+              aria-expanded={showFilters}
+              aria-controls="filters-panel"
+            >
+              <SlidersHorizontal size={18} />
+              <span>Filtres</span>
+            </button>
+
+            {/* Category Filter */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 focus:border-[#08F06C] focus:outline-none"
+              aria-label="Filtrer par catégorie"
+            >
+              {categories.map(category => (
+                <option key={category.id} value={category.id} className="bg-gray-900 text-white">
+                  {category.name} ({category.count})
+                </option>
+              ))}
+            </select>
+
+            {/* Price Filter */}
+            <select
+              value={selectedPriceRange}
+              onChange={(e) => setSelectedPriceRange(e.target.value)}
+              className="bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 focus:border-[#08F06C] focus:outline-none"
+              aria-label="Filtrer par prix"
+            >
+              {priceRanges.map(range => (
+                <option key={range.id} value={range.id} className="bg-gray-900 text-white">
+                  {range.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sorting and View Mode */}
+          <div className="flex items-center space-x-4">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 focus:border-[#08F06C] focus:outline-none"
+              aria-label="Trier par"
+            >
+              <option value="popularity" className="bg-gray-900 text-white">Popularité</option>
+              <option value="price-low" className="bg-gray-900 text-white">Prix croissant</option>
+              <option value="price-high" className="bg-gray-900 text-white">Prix décroissant</option>
+              <option value="rating" className="bg-gray-900 text-white">Note</option>
+              <option value="name" className="bg-gray-900 text-white">Nom</option>
+            </select>
+
+            <div className="flex bg-white/10 backdrop-blur-sm rounded-lg border border-white/20 overflow-hidden">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2 transition-colors duration-200 ${
+                  viewMode === 'grid' ? 'bg-[#08F06C] text-black' : 'text-white hover:bg-white/20'
+                }`}
+                aria-label="Vue grille"
+                aria-pressed={viewMode === 'grid'}
+              >
+                <Grid size={18} />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2 transition-colors duration-200 ${
+                  viewMode === 'list' ? 'bg-[#08F06C] text-black' : 'text-white hover:bg-white/20'
+                }`}
+                aria-label="Vue liste"
+                aria-pressed={viewMode === 'list'}
+              >
+                <List size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="mb-6">
+          <p className="text-gray-300">
+            {sortedProducts.length} produit{sortedProducts.length > 1 ? 's' : ''} trouvé{sortedProducts.length > 1 ? 's' : ''}
+          </p>
+        </div>
+
         {/* Products Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-          {products.map((product) => (
-            <div
+        <div className={`grid gap-4 sm:gap-6 lg:gap-8 ${
+          viewMode === 'grid' 
+            ? 'grid-cols-2 lg:grid-cols-4' 
+            : 'grid-cols-1 lg:grid-cols-2'
+        }`}>
+          {sortedProducts.map((product) => (
+            <article
               key={product.id}
               className="group relative bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl lg:rounded-3xl overflow-hidden border border-white/20 hover:border-[#08F06C]/50 transition-all duration-500 transform hover:-translate-y-2 lg:hover:-translate-y-4 hover:shadow-2xl hover:shadow-[#08F06C]/25"
             >
@@ -238,15 +431,23 @@ const FleursCBDCategoryPage = () => {
                   src={product.image}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
 
                 {/* Hover Actions */}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-3">
-                  <button className="bg-white/20 backdrop-blur-sm text-white p-2 lg:p-3 rounded-full hover:bg-white/30 transition-colors duration-200 border border-white/30">
+                  <button 
+                    className="bg-white/20 backdrop-blur-sm text-white p-2 lg:p-3 rounded-full hover:bg-white/30 transition-colors duration-200 border border-white/30"
+                    aria-label={`Voir les détails de ${product.name}`}
+                  >
                     <Eye size={18} className="lg:w-5 lg:h-5" />
                   </button>
-                  <button className="bg-[#08F06C] text-black p-2 lg:p-3 rounded-full hover:bg-[#08F06C]/90 transition-colors duration-200 shadow-lg">
+                  <button 
+                    className="bg-[#08F06C] text-black p-2 lg:p-3 rounded-full hover:bg-[#08F06C]/90 transition-colors duration-200 shadow-lg"
+                    aria-label={`Ajouter ${product.name} au panier`}
+                    disabled={!product.inStock}
+                  >
                     <ShoppingCart size={18} className="lg:w-5 lg:h-5" />
                   </button>
                 </div>
@@ -261,7 +462,7 @@ const FleursCBDCategoryPage = () => {
 
                 {/* Rating */}
                 <div className="flex items-center mb-2 sm:mb-3">
-                  <div className="flex text-amber-400">
+                  <div className="flex text-amber-400" role="img" aria-label={`Note: ${product.rating} sur 5 étoiles`}>
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
@@ -270,7 +471,9 @@ const FleursCBDCategoryPage = () => {
                       />
                     ))}
                   </div>
-                  <span className="text-gray-300 ml-2 text-xs sm:text-sm">{product.reviews} avis</span>
+                  <span className="text-gray-300 ml-2 text-xs sm:text-sm">
+                    {product.reviews} avis
+                  </span>
                 </div>
 
                 {/* Category Badge */}
@@ -285,12 +488,10 @@ const FleursCBDCategoryPage = () => {
                   <div className="relative">
                     <button 
                       className="w-full border border-white/30 rounded-lg p-2 sm:p-3 text-center bg-white/10 hover:bg-white/20 transition-colors duration-200 flex items-center justify-between backdrop-blur-sm"
-                      onClick={() => {
-                        const dropdown = document.getElementById(`dropdown-${product.id}`);
-                        if (dropdown) {
-                          dropdown.classList.toggle('hidden');
-                        }
-                      }}
+                      onClick={() => toggleDropdown(product.id)}
+                      aria-expanded="false"
+                      aria-haspopup="listbox"
+                      aria-label={`Sélectionner une option pour ${product.name}`}
                     >
                       <span className="text-white font-medium text-xs sm:text-sm">
                         ✓ {product.options[selectedOptions[product.id] || 0]?.weight} ({product.options[selectedOptions[product.id] || 0]?.price})
@@ -301,6 +502,7 @@ const FleursCBDCategoryPage = () => {
                     <div 
                       id={`dropdown-${product.id}`}
                       className="hidden absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-lg mt-1 shadow-lg z-10 max-h-40 overflow-y-auto"
+                      role="listbox"
                     >
                       {product.options.map((option, index) => (
                         <button
@@ -309,15 +511,11 @@ const FleursCBDCategoryPage = () => {
                             (selectedOptions[product.id] || 0) === index ? 'bg-gray-100' : ''
                           }`}
                           onClick={() => {
-                            setSelectedOptions(prev => ({
-                              ...prev,
-                              [product.id]: index
-                            }));
-                            const dropdown = document.getElementById(`dropdown-${product.id}`);
-                            if (dropdown) {
-                              dropdown.classList.add('hidden');
-                            }
+                            handleOptionChange(product.id, index);
+                            toggleDropdown(product.id);
                           }}
+                          role="option"
+                          aria-selected={(selectedOptions[product.id] || 0) === index}
                         >
                           <span className="text-gray-700 font-medium text-xs sm:text-sm">
                             {option.weight} ({option.price})
@@ -352,6 +550,7 @@ const FleursCBDCategoryPage = () => {
                       : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                   }`}
                   disabled={!product.inStock}
+                  aria-label={product.inStock ? `Ajouter ${product.name} au panier` : 'Produit en rupture de stock'}
                 >
                   {product.inStock ? 'Ajouter au Panier' : 'Rupture de Stock'}
                 </button>
@@ -359,7 +558,7 @@ const FleursCBDCategoryPage = () => {
 
               {/* Glow Effect */}
               <div className="absolute inset-0 rounded-xl sm:rounded-2xl lg:rounded-3xl bg-gradient-to-r from-[#08F06C]/0 via-[#08F06C]/0 to-[#08F06C]/0 group-hover:from-[#08F06C]/10 group-hover:via-transparent group-hover:to-[#08F06C]/5 transition-all duration-500 pointer-events-none"></div>
-            </div>
+            </article>
           ))}
         </div>
 
@@ -372,13 +571,13 @@ const FleursCBDCategoryPage = () => {
       </div>
 
       {/* Categories Section */}
-      <div className="relative z-20 py-20">
+      <section className="relative z-20 py-20" aria-labelledby="categories-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <div className="inline-block bg-[#08F06C] text-black px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold text-sm sm:text-lg mb-6">
               NOS GAMMES
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
+            <h2 id="categories-heading" className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
               Découvrez Nos Catégories
             </h2>
             <p className="text-base sm:text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto px-4">
@@ -420,9 +619,12 @@ const FleursCBDCategoryPage = () => {
                 description: "Tout pour votre consommation CBD"
               }
             ].map((category) => (
-              <div
+              <article
                 key={category.id}
                 className="group relative bg-gray-900/50 backdrop-blur-sm rounded-xl lg:rounded-2xl overflow-hidden border border-gray-700 hover:border-[#08F06C]/50 transition-all duration-500 transform hover:-translate-y-2 lg:hover:-translate-y-4 hover:shadow-2xl hover:shadow-[#08F06C]/25 cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label={`Découvrir la catégorie ${category.name}`}
               >
                 {/* Image Container */}
                 <div className="relative h-32 sm:h-40 lg:h-48 overflow-hidden">
@@ -430,6 +632,7 @@ const FleursCBDCategoryPage = () => {
                     src={category.image}
                     alt={category.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                   
@@ -449,24 +652,24 @@ const FleursCBDCategoryPage = () => {
 
                 {/* Glow Effect */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#08F06C]/0 via-[#08F06C]/0 to-[#08F06C]/0 group-hover:from-[#08F06C]/10 group-hover:via-transparent group-hover:to-[#08F06C]/5 transition-all duration-500 pointer-events-none"></div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Compact Reviews Section */}
-      <div className="relative z-20 py-16 bg-gradient-to-br from-gray-900/80 to-black/90">
+      <section className="relative z-20 py-16 bg-gradient-to-br from-gray-900/80 to-black/90" aria-labelledby="reviews-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <div className="inline-block bg-[#08F06C] text-black px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold text-sm sm:text-lg mb-6">
               ⭐ AVIS CLIENTS ⭐
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
+            <h2 id="reviews-heading" className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
               Ce Que Disent Nos Clients
             </h2>
             <div className="flex items-center justify-center space-x-4 mb-6">
-              <div className="flex text-amber-400">
+              <div className="flex text-amber-400" role="img" aria-label="Note moyenne: 4.9 sur 5 étoiles">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} size={24} className="fill-current" />
                 ))}
@@ -522,13 +725,13 @@ const FleursCBDCategoryPage = () => {
                 date: "Il y a 9 mois"
               }
             ].map((review, index) => (
-              <div
+              <article
                 key={index}
                 className="bg-gray-800/50 backdrop-blur-sm p-4 sm:p-5 rounded-xl border border-gray-700 hover:border-[#08F06C]/50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg hover:shadow-[#08F06C]/20"
               >
                 {/* Rating */}
                 <div className="flex items-center mb-3">
-                  <div className="flex text-amber-400">
+                  <div className="flex text-amber-400" role="img" aria-label={`Note: ${review.rating} sur 5 étoiles`}>
                     {[...Array(review.rating)].map((_, i) => (
                       <Star key={i} size={14} className="fill-current" />
                     ))}
@@ -539,9 +742,9 @@ const FleursCBDCategoryPage = () => {
                 </div>
 
                 {/* Comment */}
-                <p className="text-gray-300 mb-3 text-sm leading-relaxed line-clamp-3">
+                <blockquote className="text-gray-300 mb-3 text-sm leading-relaxed line-clamp-3">
                   "{review.comment}"
-                </p>
+                </blockquote>
 
                 {/* Product Badge */}
                 <div className="mb-3">
@@ -553,7 +756,7 @@ const FleursCBDCategoryPage = () => {
                 {/* Author Info */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <div className="w-6 h-6 rounded-full bg-[#08F06C] flex items-center justify-center mr-2">
+                    <div className="w-6 h-6 rounded-full bg-[#08F06C] flex items-center justify-center mr-2 flex-shrink-0">
                       <span className="text-black font-bold text-xs">
                         {review.name.charAt(0).toUpperCase()}
                       </span>
@@ -566,10 +769,10 @@ const FleursCBDCategoryPage = () => {
                   </div>
                   <div className="text-right">
                     <div className="text-[#08F06C] font-bold text-xs">VÉRIFIÉ</div>
-                    <div className="text-gray-400 text-xs">{review.date}</div>
+                    <time className="text-gray-400 text-xs">{review.date}</time>
                   </div>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
 
@@ -600,10 +803,10 @@ const FleursCBDCategoryPage = () => {
             </button>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Bottom Information Section */}
-      <div className="relative z-20 bg-gradient-to-br from-gray-50 via-white to-gray-100 py-20 overflow-hidden">
+      <section className="relative z-20 bg-gradient-to-br from-gray-50 via-white to-gray-100 py-20 overflow-hidden" aria-labelledby="info-heading">
         {/* Background Decorative Elements */}
         <div className="absolute top-0 left-0 w-full h-full">
           <div className="absolute top-10 left-10 w-32 h-32 bg-[#08F06C]/10 rounded-full blur-2xl"></div>
@@ -628,12 +831,12 @@ const FleursCBDCategoryPage = () => {
           <div className="relative text-center mb-16">
             {/* Decorative Icon */}
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#08F06C] to-green-500 rounded-2xl mb-8 shadow-xl shadow-[#08F06C]/25">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
               </svg>
             </div>
             
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-black to-gray-800 bg-clip-text text-transparent mb-8 leading-tight">
+            <h2 id="info-heading" className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-black to-gray-800 bg-clip-text text-transparent mb-8 leading-tight">
               Acheter les résines de CBD Pas Cher 13<br />
               <span className="text-[#08F06C]">c'est les adopter.</span>
             </h2>
@@ -641,9 +844,9 @@ const FleursCBDCategoryPage = () => {
             <div className="space-y-8 text-base sm:text-lg text-gray-700 max-w-4xl mx-auto">
               {/* Feature Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-                <div className="group bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg hover:shadow-xl hover:shadow-[#08F06C]/10 transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 hover:border-[#08F06C]/30">
+                <article className="group bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg hover:shadow-xl hover:shadow-[#08F06C]/10 transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 hover:border-[#08F06C]/30">
                   <div className="w-12 h-12 bg-gradient-to-br from-[#08F06C] to-green-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                     </svg>
                   </div>
@@ -652,11 +855,11 @@ const FleursCBDCategoryPage = () => {
                     Nos résines sont soigneusement extraites des fleurs de cannabis pour offrir une 
                     concentration de cannabidiol idéale et une <span className="font-bold text-[#08F06C]">expérience proche de la perfection</span>.
                   </p>
-                </div>
+                </article>
                 
-                <div className="group bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg hover:shadow-xl hover:shadow-[#08F06C]/10 transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 hover:border-[#08F06C]/30">
+                <article className="group bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg hover:shadow-xl hover:shadow-[#08F06C]/10 transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 hover:border-[#08F06C]/30">
                   <div className="w-12 h-12 bg-gradient-to-br from-[#08F06C] to-green-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                   </div>
@@ -665,11 +868,11 @@ const FleursCBDCategoryPage = () => {
                     Nos résines offrent un <span className="font-bold text-[#08F06C]">taux de CBD élevé</span> et une <span className="font-bold text-[#08F06C]">expérience ultra relaxante</span> quelque-soit 
                     la variété de Hash CBD commandée.
                   </p>
-                </div>
+                </article>
                 
-                <div className="group bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg hover:shadow-xl hover:shadow-[#08F06C]/10 transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 hover:border-[#08F06C]/30">
+                <article className="group bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg hover:shadow-xl hover:shadow-[#08F06C]/10 transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 hover:border-[#08F06C]/30">
                   <div className="w-12 h-12 bg-gradient-to-br from-[#08F06C] to-green-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                     </svg>
                   </div>
@@ -678,7 +881,7 @@ const FleursCBDCategoryPage = () => {
                     Nos résines de CBD conservent les <span className="font-bold text-[#08F06C]">arômes authentiques du kief et des terpènes du 
                     cannabis</span> tout en étant parfaitement conformes à la législation.
                   </p>
-                </div>
+                </article>
               </div>
               
               {/* Quality Guarantee Banner */}
@@ -686,7 +889,7 @@ const FleursCBDCategoryPage = () => {
                 <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-[#08F06C] rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
-                      <svg className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
@@ -696,7 +899,7 @@ const FleursCBDCategoryPage = () => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <div className="flex text-amber-400">
+                    <div className="flex text-amber-400" role="img" aria-label="Note: 4.9 sur 5 étoiles">
                       {[...Array(5)].map((_, i) => (
                         <svg key={i} className="w-5 h-5 fill-current" viewBox="0 0 20 20">
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -717,16 +920,17 @@ const FleursCBDCategoryPage = () => {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Services Section */}
-      <div className="relative z-20 bg-black py-12">
+      <section className="relative z-20 bg-black py-12" aria-labelledby="services-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 id="services-heading" className="sr-only">Nos Services</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {/* Service 1 */}
-            <div className="text-white">
+            <article className="text-white">
               <div className="w-16 h-16 mx-auto mb-4 bg-[#08F06C]/20 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-[#08F06C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 text-[#08F06C]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -734,12 +938,12 @@ const FleursCBDCategoryPage = () => {
               <p className="text-sm text-gray-300">
                 Livraison dans toute l'europe, gratuite à partir de 69€ d'achat
               </p>
-            </div>
+            </article>
 
             {/* Service 2 */}
-            <div className="text-white">
+            <article className="text-white">
               <div className="w-16 h-16 mx-auto mb-4 bg-[#08F06C]/20 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-[#08F06C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 text-[#08F06C]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
@@ -747,12 +951,12 @@ const FleursCBDCategoryPage = () => {
               <p className="text-sm text-gray-300">
                 Offerte pour toutes les commandes sans minimum d'achat
               </p>
-            </div>
+            </article>
 
             {/* Service 3 */}
-            <div className="text-white">
+            <article className="text-white">
               <div className="w-16 h-16 mx-auto mb-4 bg-[#08F06C]/20 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-[#08F06C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 text-[#08F06C]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
               </div>
@@ -760,12 +964,12 @@ const FleursCBDCategoryPage = () => {
               <p className="text-sm text-gray-300">
                 Nos emballages sont neutres pour un maximum de discrétion
               </p>
-            </div>
+            </article>
 
             {/* Service 4 */}
-            <div className="text-white">
+            <article className="text-white">
               <div className="w-16 h-16 mx-auto mb-4 bg-[#08F06C]/20 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-[#08F06C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 text-[#08F06C]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
@@ -773,10 +977,10 @@ const FleursCBDCategoryPage = () => {
               <p className="text-sm text-gray-300">
                 Payez de manière sécurisée par carte bleue grâce à nos partenaires
               </p>
-            </div>
+            </article>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Legal Notice Banner */}
       <div className="relative z-20 bg-black border-t border-gray-800 py-4">

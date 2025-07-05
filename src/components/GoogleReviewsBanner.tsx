@@ -1,7 +1,7 @@
 import React from 'react';
 import { Star, ExternalLink } from 'lucide-react';
 
-const GoogleReviewsBanner = () => {
+const GoogleReviewsBanner: React.FC = () => {
   return (
     <div className="hidden md:block bg-gradient-to-r from-[#08F06C] to-[#08F06C]/90 text-black py-3 relative overflow-hidden">
       {/* Background Pattern */}
@@ -13,7 +13,7 @@ const GoogleReviewsBanner = () => {
           {/* Google Logo */}
           <div className="flex items-center space-x-2">
             <div className="bg-white rounded-lg p-2 shadow-lg">
-              <svg width="20" height="20" viewBox="0 0 24 24" className="text-blue-600">
+              <svg width="20" height="20" viewBox="0 0 24 24" className="text-blue-600" aria-hidden="true">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -25,7 +25,7 @@ const GoogleReviewsBanner = () => {
 
           {/* Rating */}
           <div className="flex items-center space-x-2 order-1 md:order-none">
-            <div className="flex text-amber-500">
+            <div className="flex text-amber-500" role="img" aria-label="Note: 4.9 sur 5 étoiles">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} size={20} className="fill-current" />
               ))}
@@ -36,19 +36,20 @@ const GoogleReviewsBanner = () => {
           {/* Reviews Count */}
           <div className="flex items-center space-x-2 order-2 md:order-none">
             <span className="font-bold text-lg">473 avis</span>
-            <ExternalLink size={16} className="opacity-70" />
+            <ExternalLink size={16} className="opacity-70" aria-hidden="true" />
           </div>
 
           {/* Separator */}
-          <div className="hidden lg:block w-px h-6 bg-black/20"></div>
+          <div className="hidden lg:block w-px h-6 bg-black/20" aria-hidden="true"></div>
 
           {/* Recent Review */}
           <div className="hidden xl:flex items-center space-x-3 max-w-md order-3">
             <div className="flex-shrink-0">
               <img
                 src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=50"
-                alt="Client"
+                alt=""
                 className="w-8 h-8 rounded-full border-2 border-white/50"
+                loading="lazy"
               />
             </div>
             <div className="text-left">
@@ -60,15 +61,18 @@ const GoogleReviewsBanner = () => {
           </div>
 
           {/* CTA */}
-          <button className="bg-black/20 hover:bg-black/30 text-black px-3 py-2 rounded-lg font-bold text-xs sm:text-sm transition-colors duration-200 flex items-center space-x-2 order-4 md:order-none">
+          <button 
+            className="bg-black/20 hover:bg-black/30 text-black px-3 py-2 rounded-lg font-bold text-xs sm:text-sm transition-colors duration-200 flex items-center space-x-2 order-4 md:order-none focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-[#08F06C]"
+            aria-label="Voir tous les avis Google"
+          >
             <span>Voir tous les avis</span>
-            <ExternalLink size={14} />
+            <ExternalLink size={14} aria-hidden="true" />
           </button>
         </div>
       </div>
 
       {/* Animated dots */}
-      <div className="hidden md:flex absolute right-4 top-1/2 transform -translate-y-1/2 space-x-1">
+      <div className="hidden md:flex absolute right-4 top-1/2 transform -translate-y-1/2 space-x-1" aria-hidden="true">
         <div className="w-2 h-2 bg-black/20 rounded-full animate-pulse"></div>
         <div className="w-2 h-2 bg-black/20 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
         <div className="w-2 h-2 bg-black/20 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
