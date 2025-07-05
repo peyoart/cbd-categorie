@@ -374,11 +374,11 @@ const FleursCBDCategoryPage = () => {
       {/* Categories Section */}
       <div className="relative z-20 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="inline-block bg-[#08F06C] text-black px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold text-lg sm:text-xl mb-6">
+          <div className="text-center mb-12">
+            <div className="inline-block bg-[#08F06C] text-black px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold text-sm sm:text-lg mb-6">
               NOS GAMMES
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
               Découvrez Nos Catégories
             </h2>
             <p className="text-base sm:text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto px-4">
@@ -451,6 +451,153 @@ const FleursCBDCategoryPage = () => {
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#08F06C]/0 via-[#08F06C]/0 to-[#08F06C]/0 group-hover:from-[#08F06C]/10 group-hover:via-transparent group-hover:to-[#08F06C]/5 transition-all duration-500 pointer-events-none"></div>
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Compact Reviews Section */}
+      <div className="relative z-20 py-16 bg-gradient-to-br from-gray-900/80 to-black/90">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="inline-block bg-[#08F06C] text-black px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold text-sm sm:text-lg mb-6">
+              ⭐ AVIS CLIENTS ⭐
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
+              Ce Que Disent Nos Clients
+            </h2>
+            <div className="flex items-center justify-center space-x-4 mb-6">
+              <div className="flex text-amber-400">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={24} className="fill-current" />
+                ))}
+              </div>
+              <span className="text-2xl font-bold text-[#08F06C]">4.9/5</span>
+              <span className="text-gray-300">• 473 avis</span>
+            </div>
+          </div>
+
+          {/* Compact Reviews Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {[
+              {
+                name: "luc martinez",
+                rating: 5,
+                comment: "Hola, c'est un magasin de CBD qui de très bonne qualité!! Vraiment top ! Le service client est incroyable.",
+                product: "Magasin CBD",
+                date: "Il y a 1 mois"
+              },
+              {
+                name: "Carlos Mozer",
+                rating: 5,
+                comment: "Produits et prix au top, ambiance typique phocéenne, La boutique du peuple !! 😎",
+                product: "Boutique CBD",
+                date: "Il y a 1 mois"
+              },
+              {
+                name: "Marie-cyrielle giraut",
+                rating: 5,
+                comment: "Très commerçant j'adore Mika il est trop sympas.... Je marche quand je suis en panne de scooter.",
+                product: "Service client",
+                date: "Il y a 4 mois"
+              },
+              {
+                name: "Debora Kiener",
+                rating: 5,
+                comment: "Mika hela gentil! On trouve de tout les goûts dans ce magasin de cbd le meilleur de cour Julien !",
+                product: "Magasin CBD",
+                date: "Il y a 2 mois"
+              },
+              {
+                name: "Maxime Beliart",
+                rating: 5,
+                comment: "Premier passage hier sous conseil d'un ami vraiment pas déçu superbe qualité",
+                product: "Première visite",
+                date: "Il y a 1 mois"
+              },
+              {
+                name: "Melodie Bouafia",
+                rating: 5,
+                comment: "Super endroit et super qualité. Toujours bien conseillé et avec le sourire en plus !",
+                product: "Rapport qualité-prix",
+                date: "Il y a 9 mois"
+              }
+            ].map((review, index) => (
+              <div
+                key={index}
+                className="bg-gray-800/50 backdrop-blur-sm p-4 sm:p-5 rounded-xl border border-gray-700 hover:border-[#08F06C]/50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg hover:shadow-[#08F06C]/20"
+              >
+                {/* Rating */}
+                <div className="flex items-center mb-3">
+                  <div className="flex text-amber-400">
+                    {[...Array(review.rating)].map((_, i) => (
+                      <Star key={i} size={14} className="fill-current" />
+                    ))}
+                  </div>
+                  <span className="ml-2 text-[#08F06C] font-bold text-sm">
+                    ({review.rating}/5)
+                  </span>
+                </div>
+
+                {/* Comment */}
+                <p className="text-gray-300 mb-3 text-sm leading-relaxed line-clamp-3">
+                  "{review.comment}"
+                </p>
+
+                {/* Product Badge */}
+                <div className="mb-3">
+                  <span className="inline-block bg-[#08F06C]/20 text-[#08F06C] px-2 py-1 rounded-full text-xs font-bold border border-[#08F06C]/30">
+                    ✅ {review.product}
+                  </span>
+                </div>
+
+                {/* Author Info */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="w-6 h-6 rounded-full bg-[#08F06C] flex items-center justify-center mr-2">
+                      <span className="text-black font-bold text-xs">
+                        {review.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-sm">
+                        {review.name}
+                      </h4>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[#08F06C] font-bold text-xs">VÉRIFIÉ</div>
+                    <div className="text-gray-400 text-xs">{review.date}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
+            <div className="text-center bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+              <div className="text-2xl font-bold text-[#08F06C] mb-1">15,000+</div>
+              <div className="text-white text-sm">Clients Satisfaits</div>
+            </div>
+            <div className="text-center bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+              <div className="text-2xl font-bold text-[#08F06C] mb-1">4.9/5</div>
+              <div className="text-white text-sm">Note Moyenne</div>
+            </div>
+            <div className="text-center bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+              <div className="text-2xl font-bold text-[#08F06C] mb-1">99.8%</div>
+              <div className="text-white text-sm">Recommandations</div>
+            </div>
+            <div className="text-center bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+              <div className="text-2xl font-bold text-[#08F06C] mb-1">24H</div>
+              <div className="text-white text-sm">Livraison Express</div>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <div className="text-center mt-8">
+            <button className="bg-[#08F06C] hover:bg-[#08F06C]/90 text-black px-6 sm:px-8 py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 transform hover:scale-105">
+              Voir Tous les Avis
+            </button>
           </div>
         </div>
       </div>
