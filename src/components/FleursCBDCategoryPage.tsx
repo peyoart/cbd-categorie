@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Star, ShoppingCart, ChevronDown, Eye, Filter, Grid, List, SlidersHorizontal } from 'lucide-react';
+import { Star, ShoppingCart, ChevronDown, Eye, Grid, List, SlidersHorizontal } from 'lucide-react';
 
 interface ProductOption {
   weight: string;
