@@ -603,16 +603,17 @@ const FleursCBDCategoryPage = () => {
       </div>
 
       {/* Bottom Information Section */}
-      <div className="relative z-20 bg-white py-16">
+      <div className="relative z-20 bg-black py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Main Content */}
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-black mb-8">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-8">
               Acheter les résines de CBD Pas Cher 13 c'est<br />
               les adopter.
             </h2>
             
-            <div className="space-y-6 text-base sm:text-lg text-gray-700 max-w-4xl mx-auto">
+            <div className="space-y-6 text-base sm:text-lg text-gray-300 max-w-4xl mx-auto">
               <p>
                 Nos résines sont soigneusement extraites des fleurs de cannabis pour offrir une 
                 concentration de cannabidiol idéale et une <span className="font-bold">expérience proche de la perfection</span>.
