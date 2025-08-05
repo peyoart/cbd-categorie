@@ -570,59 +570,6 @@ const FleursCBDCategoryPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Categories Section */}
-      <section className="relative z-20 py-20" aria-labelledby="categories-heading">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="inline-block bg-[#08F06C] text-black px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold text-sm sm:text-lg mb-6">
-              NOS GAMMES
-            </div>
-            <h2 id="categories-heading" className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
-              Découvrez Nos Catégories
-            </h2>
-            <p className="text-base sm:text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto px-4">
-              Une sélection complète de produits CBD pour tous vos besoins et préférences.
-            </p>
-          </div>
-
-          {/* Categories Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-            {[
-              {
-                id: 1,
-                name: "Bons Plans",
-                image: "https://cbdpascher13.fr/wp-content/uploads/2025/04/bons-plans2.png",
-                description: "Offres spéciales et promotions"
-              },
-              {
-                id: 2,
-                name: "Fleurs CBD",
-                image: "https://cbdpascher13.fr/wp-content/uploads/2025/04/fleurs-cbd.png",
-                description: "Fleurs premium cultivées en France"
-              },
-              {
-                id: 3,
-                name: "Résines CBD",
-                image: "https://cbdpascher13.fr/wp-content/uploads/2025/04/resines-cbd.png",
-                description: "Résines de qualité supérieure"
-              },
-              {
-                id: 4,
-                name: "Get High",
-                image: "https://cbdpascher13.fr/wp-content/uploads/2025/04/get-high3.png",
-                description: "Produits pour une expérience intense"
-              },
-              {
-                id: 5,
-                name: "Accessoires CBD",
-                image: "https://cbdpascher13.fr/wp-content/uploads/2025/04/accessoires-cbd.png",
-                description: "Tout pour votre consommation CBD"
-              }
-            ].map((category) => (
-              <article
-                key={category.id}
-                className="group relative bg-gray-900/50 backdrop-blur-sm rounded-xl lg:rounded-2xl overflow-hidden border border-gray-700 hover:border-[#08F06C]/50 transition-all duration-500 transform hover:-translate-y-2 lg:hover:-translate-y-4 hover:shadow-2xl hover:shadow-[#08F06C]/25 cursor-pointer"
-                role="button"
                 tabIndex={0}
                 aria-label={`Découvrir la catégorie ${category.name}`}
               >
