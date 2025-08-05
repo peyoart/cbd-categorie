@@ -636,6 +636,7 @@ const FleursCBDCategoryPage: React.FC = () => {
 
                 {/* Glow Effect */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#08F06C]/0 via-[#08F06C]/0 to-[#08F06C]/0 group-hover:from-[#08F06C]/10 group-hover:via-transparent group-hover:to-[#08F06C]/5 transition-all duration-500 pointer-events-none"></div>
+              </div>
               </article>
             ))}
           </div>
