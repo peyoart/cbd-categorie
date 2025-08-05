@@ -307,7 +307,7 @@ const FleursCBDCategoryPage: React.FC = () => {
         </div>
 
         {/* Filters and Sorting */}
-        <div className="mb-8 flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        <div className="mb-8 flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between hidden">
           {/* Filters */}
           <div className="flex flex-wrap gap-4 items-center">
             <button
